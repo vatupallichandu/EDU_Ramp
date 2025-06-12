@@ -1,28 +1,44 @@
-package day3;
+package comn;
 
-class SavingsAccount extends Account {
-    private double initialDeposit;
-    private String aadharCardNumber;
-    private String panCardNumber;
+class SavingsAccount extends BankAccount {
+    private static final double MIN_DEPOSIT = 1000;
+    private static final double INTEREST_RATE = 0.04;
+    private static final int MAX_WITHDRAWALS_PER_MONTH = 3;
+    private int withdrawalsThisMonth = 0;
  
-    public SavingsAccount(String accountNumber, String accountHolderName, String address, String contactNumber,
-                         double initialDeposit, String aadharCardNumber, String panCardNumber) {
-        super(accountNumber, accountHolderName, address, contactNumber);
-        this.initialDeposit = initialDeposit;
-        this.aadharCardNumber = aadharCardNumber;
-        this.panCardNumber = panCardNumber;
+    public SavingsAccount(String accountHolderName, String mobileNumber, double initialDeposit) {
+        super(accountHolderName, mobileNumber, initialDeposit);
+        if (initialDeposit < MIN_DEPOSIT) {
+            System.out.println("Minimum deposit of ₹1000 required for Savings Account.");
+            return;
+        }
+        openAccount();
     }
  
     @Override
-    void openAccount() {
+    public void openAccount() {
         System.out.println("Opening Savings Account...");
-        System.out.println("Required Documents:");
-        System.out.println("1. Aadhar Card: " + aadharCardNumber);
-        System.out.println("2. PAN Card: " + panCardNumber);
-        System.out.println("3. Proof of Address: " + address);
-        System.out.println("4. Proof of Identity: " + accountHolderName);
-        displayAccountDetails();
-        System.out.println("Initial Deposit: " + initialDeposit);
+        validateAccount();
+    }
+ 
+    @Override
+    public double calculateInterest() {
+        return balance * INTEREST_RATE;
+    }
+ 
+    @Override
+    public void withdraw(double amount) {
+        if (withdrawalsThisMonth >= MAX_WITHDRAWALS_PER_MONTH) {
+            System.out.println("Maximum withdrawals per month exceeded.");
+            return;
+        }
+        if (isValidWithdrawalAmount(amount)) {
+            balance -= amount;
+            withdrawalsThisMonth++;
+            System.out.println("Withdrawal successful. Remaining balance: " + balance);
+        } else {
+            System.out.println("Invalid withdrawal amount.");
+        }
     }
 }
  

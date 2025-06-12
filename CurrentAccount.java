@@ -1,28 +1,42 @@
-package day3;
+package comn;
 
-class CurrentAccount extends Account {
-    private double initialDeposit;
-    private String gstNumber;
-    private String businessProof;
+class CurrentAccount extends BankAccount {
+    private static final double MIN_DEPOSIT = 5000;
+    private static final double MIN_BALANCE = 2000;
+    private static final double PENALTY = 500;
  
-    public CurrentAccount(String accountNumber, String accountHolderName, String address, String contactNumber,
-                         double initialDeposit, String gstNumber, String businessProof) {
-        super(accountNumber, accountHolderName, address, contactNumber);
-        this.initialDeposit = initialDeposit;
-        this.gstNumber = gstNumber;
-        this.businessProof = businessProof;
+    public CurrentAccount(String accountHolderName, String mobileNumber, double initialDeposit) {
+        super(accountHolderName, mobileNumber, initialDeposit);
+        if (initialDeposit < MIN_DEPOSIT) {
+            System.out.println("Minimum deposit of ₹5000 required for Current Account.");
+            return;
+        }
+        openAccount();
     }
  
     @Override
-    void openAccount() {
+    public void openAccount() {
         System.out.println("Opening Current Account...");
-        System.out.println("Required Documents:");
-        System.out.println("1. GST Certificate: " + gstNumber);
-        System.out.println("2. Business Proof: " + businessProof);
-        System.out.println("3. Proof of Address: " + address);
-        System.out.println("4. Proof of Identity: " + accountHolderName);
-        displayAccountDetails();
-        System.out.println("Initial Deposit: " + initialDeposit);
+        validateAccount();
+    }
+ 
+    @Override
+    public double calculateInterest() {
+        return 0;
+    }
+ 
+    @Override
+    public void withdraw(double amount) {
+        if (isValidWithdrawalAmount(amount)) {
+            balance -= amount;
+            if (balance < MIN_BALANCE) {
+                balance -= PENALTY;
+                System.out.println("Minimum balance not maintained. Penalty of ₹500 applied.");
+            }
+            System.out.println("Withdrawal successful. Remaining balance: " + balance);
+        } else {
+            System.out.println("Invalid withdrawal amount.");
+        }
     }
 }
  
